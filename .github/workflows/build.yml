@@ -30,12 +30,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-
 
-      - name: Build clv-app
-        run: cargo build --release --bin clv-app
+      - name: Build clv3000-plus
+        run: cargo build --release --bin clv3000-plus
 
       - name: Upload Release Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: clv-app-windows-x64
-          path: target/release/clv-app.exe
+          name: clv3000-plus-windows-x64
+          path: target/release/clv3000-plus.exe
           if-no-files-found: error
