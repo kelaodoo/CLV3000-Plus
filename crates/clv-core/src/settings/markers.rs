@@ -2,6 +2,8 @@ use crate::models::TechStack;
 
 pub fn agent_name_patterns() -> &'static [&'static str] {
     &[
+        "antigravity",
+        "agy",
         "claude",
         "cursor",
         "codex",
@@ -23,6 +25,8 @@ pub fn agent_name_patterns() -> &'static [&'static str] {
 
 pub fn agent_marker_files() -> &'static [&'static str] {
     &[
+        ".antigravity",
+        ".gemini",
         ".agents",
         ".cursor",
         ".claude",

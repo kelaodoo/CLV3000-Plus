@@ -147,6 +147,10 @@ pub enum RuleDescription {
     R138,
     R139,
     R140,
+    R141,
+    R142,
+    R143,
+    R144,
 }
 
 impl RuleDescription {
@@ -291,6 +295,10 @@ impl RuleDescription {
         Self::R138,
         Self::R139,
         Self::R140,
+        Self::R141,
+        Self::R142,
+        Self::R143,
+        Self::R144,
     ];
 
     pub fn text(self, lang: Language) -> &'static str {
@@ -436,9 +444,14 @@ impl RuleDescription {
             R138 => tr(lang, "Chrome 浏览器缓存，可安全清理", "Chrome browser cache; safe to clean", "Chrome ブラウザキャッシュ。安全に削除できます"),
             R139 => tr(lang, "Edge 浏览器缓存，可安全清理", "Microsoft Edge browser cache; safe to clean", "Microsoft Edge ブラウザキャッシュ。安全に削除できます"),
             R140 => tr(lang, "Firefox 浏览器缓存，可安全清理", "Firefox browser cache; safe to clean", "Firefox ブラウザキャッシュ。安全に削除できます"),
+            R141 => tr(lang, "Antigravity CLI 会话历史与上下文（brain 目录），删除后无法恢复", "Antigravity CLI session history and context (brain directory); cannot be recovered after deletion", "Antigravity CLI セッション履歴とコンテキスト（brain ディレクトリ）。削除後は復元できません"),
+            R142 => tr(lang, "Antigravity CLI 任务与系统运行日志，可安全清理", "Antigravity CLI tasks and runtime logs; safe to clean", "Antigravity CLI タスクおよび実行ログ。安全に削除できます"),
+            R143 => tr(lang, "Antigravity 桌面端应用与代码缓存，可安全清理", "Antigravity desktop app and code cache; safe to clean", "Antigravity デスクトップアプリとコードキャッシュ。安全に削除できます"),
+            R144 => tr(lang, "Antigravity 桌面端工作区存储与状态，删除后无法恢复", "Antigravity desktop workspace storage and state; cannot be recovered after deletion", "Antigravity デスクトップワークスペースストレージと状態。削除後は復元できません"),
         }
     }
 }
+
 pub fn rule_description_matches_query(description: RuleDescription, query: &str) -> bool {
     crate::locale::localized_text_matches_query(query, |lang| description.text(lang))
 }

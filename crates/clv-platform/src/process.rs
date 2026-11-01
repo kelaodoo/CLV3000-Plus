@@ -207,7 +207,7 @@ fn categorize_process(name: &str) -> ProcessCategory {
 
     if agent_keywords.iter().any(|k| lower.contains(k)) {
         ProcessCategory::Dev
-    } else if lower.contains("agent") || lower.contains("workbuddy") {
+    } else if lower.contains("agent") || lower.contains("workbuddy") || lower.contains("antigravity") || lower.contains("agy") {
         ProcessCategory::Agent
     } else if system_keywords.iter().any(|k| lower.contains(k)) {
         ProcessCategory::System

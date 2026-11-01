@@ -263,6 +263,75 @@ pub fn discover_agent_session_targets() -> Vec<AgentSessionTarget> {
         );
     }
 
+    for agy_cli_root in antigravity_cli_roots(&home) {
+        push_dir(
+            &mut targets,
+            agy_cli_root.join("brain"),
+            RiskLevel::Caution,
+            CleanupCategory::AgentSession,
+            RuleDescription::R141,
+        );
+        push_dir(
+            &mut targets,
+            agy_cli_root.join(".system_generated/tasks"),
+            RiskLevel::Safe,
+            CleanupCategory::AgentCache,
+            RuleDescription::R142,
+        );
+        push_dir(
+            &mut targets,
+            agy_cli_root.join(".system_generated/logs"),
+            RiskLevel::Safe,
+            CleanupCategory::AgentCache,
+            RuleDescription::R142,
+        );
+    }
+
+    for agy_desktop_root in antigravity_desktop_roots(&home) {
+        push_dir(
+            &mut targets,
+            agy_desktop_root.join("CachedData"),
+            RiskLevel::Safe,
+            CleanupCategory::AgentCache,
+            RuleDescription::R143,
+        );
+        push_dir(
+            &mut targets,
+            agy_desktop_root.join("GPUCache"),
+            RiskLevel::Safe,
+            CleanupCategory::AgentCache,
+            RuleDescription::R143,
+        );
+        push_dir(
+            &mut targets,
+            agy_desktop_root.join("Code Cache"),
+            RiskLevel::Safe,
+            CleanupCategory::AgentCache,
+            RuleDescription::R143,
+        );
+        push_dir(
+            &mut targets,
+            agy_desktop_root.join("logs"),
+            RiskLevel::Safe,
+            CleanupCategory::AgentCache,
+            RuleDescription::R143,
+        );
+        push_dir(
+            &mut targets,
+            agy_desktop_root.join("User/workspaceStorage"),
+            RiskLevel::Caution,
+            CleanupCategory::AgentSession,
+            RuleDescription::R144,
+        );
+        push_dir(
+            &mut targets,
+            agy_desktop_root.join("User/globalStorage"),
+            RiskLevel::Caution,
+            CleanupCategory::AgentSession,
+            RuleDescription::R144,
+        );
+    }
+
     targets
 }
 
@@ -442,6 +511,47 @@ fn opencode_data_roots(home: &Path) -> Vec<PathBuf> {
     paths
 }
 
+fn antigravity_cli_roots(home: &Path) -> Vec<PathBuf> {
+    let mut paths = parse_env_paths("ANTIGRAVITY_APP_DATA_DIR");
+    if paths.is_empty() {
+        paths.push(home.join(".gemini/antigravity-cli"));
+        #[cfg(target_os = "windows")]
+        {
+            if let Ok(appdata) = env::var("APPDATA") {
+                paths.push(PathBuf::from(appdata).join(".gemini/antigravity-cli"));
+            }
+        }
+    }
+    paths
+}
+
+fn antigravity_desktop_roots(home: &Path) -> Vec<PathBuf> {
+    let mut roots = parse_env_paths("ANTIGRAVITY_DESKTOP_DIR");
+    if roots.is_empty() {
+        #[cfg(target_os = "windows")]
+        {
+            if let Ok(appdata) = env::var("APPDATA") {
+                roots.push(PathBuf::from(&appdata).join("Antigravity"));
+                roots.push(PathBuf::from(&appdata).join("Google/Antigravity"));
+            }
+            if let Ok(local) = env::var("LOCALAPPDATA") {
+                roots.push(PathBuf::from(&local).join("Programs/Antigravity"));
+            }
+        }
+        #[cfg(target_os = "macos")]
+        {
+            roots.push(home.join("Library/Application Support/Antigravity"));
+            roots.push(home.join("Library/Application Support/Google/Antigravity"));
+        }
+        #[cfg(not(any(target_os = "windows", target_os = "macos")))]
+        {
+            roots.push(home.join(".config/Antigravity"));
+            roots.push(home.join(".config/antigravity"));
+        }
+    }
+    roots
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -496,5 +606,27 @@ mod tests {
         unsafe {
             env::remove_var("OPENCODE_DIR");
         }
+    }
+
+    #[test]
+    fn antigravity_cli_respects_env() {
+        let temp = tempfile::tempdir().unwrap();
+        let custom = temp.path().join("custom-agy");
+        std::fs::create_dir_all(&custom).unwrap();
+        unsafe {
+            env::set_var("ANTIGRAVITY_APP_DATA_DIR", &custom);
+        }
+        let paths = antigravity_cli_roots(temp.path());
+        assert_eq!(paths, vec![custom]);
+        unsafe {
+            env::remove_var("ANTIGRAVITY_APP_DATA_DIR");
+        }
+    }
+
+    #[test]
+    fn antigravity_cli_defaults_to_gemini_home() {
+        let temp = tempfile::tempdir().unwrap();
+        let paths = antigravity_cli_roots(temp.path());
+        assert!(paths.iter().any(|p| p.ends_with(".gemini/antigravity-cli")));
     }
 }
