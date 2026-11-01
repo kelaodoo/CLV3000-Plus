@@ -200,14 +200,14 @@ fn kill_process_windows(pid: u32) -> anyhow::Result<()> {
 fn categorize_process(name: &str) -> ProcessCategory {
     let lower = name.to_lowercase();
     let agent_keywords = [
-        "cursor", "claude", "codex", "copilot", "windsurf", "aider", "node", "cargo",
+        "dsh", "deepseek", "cursor", "claude", "codex", "copilot", "windsurf", "aider", "node", "cargo",
         "gradle", "java", "python", "dotnet", "flutter", "dart", "xcodebuild",
     ];
     let system_keywords = ["kernel", "launchd", "systemd", "svchost", "windowserver"];
 
     if agent_keywords.iter().any(|k| lower.contains(k)) {
         ProcessCategory::Dev
-    } else if lower.contains("agent") || lower.contains("workbuddy") || lower.contains("antigravity") || lower.contains("agy") {
+    } else if lower.contains("agent") || lower.contains("workbuddy") || lower.contains("antigravity") || lower.contains("agy") || lower.contains("dsh") || lower.contains("deepseek") {
         ProcessCategory::Agent
     } else if system_keywords.iter().any(|k| lower.contains(k)) {
         ProcessCategory::System

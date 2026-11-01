@@ -332,6 +332,85 @@ pub fn discover_agent_session_targets() -> Vec<AgentSessionTarget> {
         );
     }
 
+    for dsh_root in dsh_home_paths(&home) {
+        push_dir(
+            &mut targets,
+            dsh_root.join("sessions"),
+            RiskLevel::Caution,
+            CleanupCategory::AgentSession,
+            RuleDescription::R145,
+        );
+        push_dir(
+            &mut targets,
+            dsh_root.join("subagent-gc-backup"),
+            RiskLevel::Safe,
+            CleanupCategory::AgentCache,
+            RuleDescription::R146,
+        );
+        push_dir(
+            &mut targets,
+            dsh_root.join("storages"),
+            RiskLevel::Safe,
+            CleanupCategory::AgentCache,
+            RuleDescription::R147,
+        );
+        push_dir(
+            &mut targets,
+            dsh_root.join("attachments/v1/tmp"),
+            RiskLevel::Safe,
+            CleanupCategory::AgentCache,
+            RuleDescription::R147,
+        );
+    }
+
+    for dsh_desktop_root in dsh_desktop_data_roots(&home) {
+        push_dir(
+            &mut targets,
+            dsh_desktop_root.join("Cache"),
+            RiskLevel::Safe,
+            CleanupCategory::AgentCache,
+            RuleDescription::R148,
+        );
+        push_dir(
+            &mut targets,
+            dsh_desktop_root.join("Code Cache"),
+            RiskLevel::Safe,
+            CleanupCategory::AgentCache,
+            RuleDescription::R148,
+        );
+        push_dir(
+            &mut targets,
+            dsh_desktop_root.join("GPUCache"),
+            RiskLevel::Safe,
+            CleanupCategory::AgentCache,
+            RuleDescription::R148,
+        );
+        push_dir(
+            &mut targets,
+            dsh_desktop_root.join("ShaderCache"),
+            RiskLevel::Safe,
+            CleanupCategory::AgentCache,
+            RuleDescription::R148,
+        );
+        push_dir(
+            &mut targets,
+            dsh_desktop_root.join("logs"),
+            RiskLevel::Safe,
+            CleanupCategory::AgentCache,
+            RuleDescription::R148,
+        );
+    }
+
+    for updater_root in dsh_updater_roots(&home) {
+        push_dir(
+            &mut targets,
+            updater_root,
+            RiskLevel::Safe,
+            CleanupCategory::AgentCache,
+            RuleDescription::R149,
+        );
+    }
+
     targets
 }
 
@@ -525,7 +604,7 @@ fn antigravity_cli_roots(home: &Path) -> Vec<PathBuf> {
     paths
 }
 
-fn antigravity_desktop_roots(home: &Path) -> Vec<PathBuf> {
+fn antigravity_desktop_roots(_home: &Path) -> Vec<PathBuf> {
     let mut roots = parse_env_paths("ANTIGRAVITY_DESKTOP_DIR");
     if roots.is_empty() {
         #[cfg(target_os = "windows")]
@@ -548,6 +627,54 @@ fn antigravity_desktop_roots(home: &Path) -> Vec<PathBuf> {
             roots.push(home.join(".config/Antigravity"));
             roots.push(home.join(".config/antigravity"));
         }
+    }
+    roots
+}
+
+fn dsh_home_paths(home: &Path) -> Vec<PathBuf> {
+    let mut paths = parse_env_paths("DSH_HOME");
+    if paths.is_empty() {
+        paths.push(home.join(".dsh"));
+    }
+    paths
+}
+
+fn dsh_desktop_data_roots(_home: &Path) -> Vec<PathBuf> {
+    let mut roots = parse_env_paths("DSH_DESKTOP_DIR");
+    if roots.is_empty() {
+        #[cfg(target_os = "windows")]
+        {
+            if let Ok(appdata) = env::var("APPDATA") {
+                roots.push(PathBuf::from(&appdata).join("@deepseek-ai/dsh-desktop"));
+                roots.push(PathBuf::from(&appdata).join("deepseek-harness"));
+            }
+        }
+        #[cfg(target_os = "macos")]
+        {
+            roots.push(_home.join("Library/Application Support/@deepseek-ai/dsh-desktop"));
+            roots.push(_home.join("Library/Application Support/deepseek-harness"));
+        }
+        #[cfg(not(any(target_os = "windows", target_os = "macos")))]
+        {
+            roots.push(_home.join(".config/@deepseek-ai/dsh-desktop"));
+            roots.push(_home.join(".config/deepseek-harness"));
+        }
+    }
+    roots
+}
+
+fn dsh_updater_roots(_home: &Path) -> Vec<PathBuf> {
+    let mut roots = Vec::new();
+    #[cfg(target_os = "windows")]
+    {
+        if let Ok(local) = env::var("LOCALAPPDATA") {
+            roots.push(PathBuf::from(&local).join("@deepseek-aidsh-desktop-updater"));
+            roots.push(PathBuf::from(&local).join("deepseek-harness-updater"));
+        }
+    }
+    #[cfg(target_os = "macos")]
+    {
+        roots.push(_home.join("Library/Caches/@deepseek-ai/dsh-desktop-updater"));
     }
     roots
 }

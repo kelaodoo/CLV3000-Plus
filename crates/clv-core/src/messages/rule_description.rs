@@ -151,6 +151,11 @@ pub enum RuleDescription {
     R142,
     R143,
     R144,
+    R145,
+    R146,
+    R147,
+    R148,
+    R149,
 }
 
 impl RuleDescription {
@@ -299,6 +304,11 @@ impl RuleDescription {
         Self::R142,
         Self::R143,
         Self::R144,
+        Self::R145,
+        Self::R146,
+        Self::R147,
+        Self::R148,
+        Self::R149,
     ];
 
     pub fn text(self, lang: Language) -> &'static str {
@@ -448,6 +458,11 @@ impl RuleDescription {
             R142 => tr(lang, "Antigravity CLI 任务与系统运行日志，可安全清理", "Antigravity CLI tasks and runtime logs; safe to clean", "Antigravity CLI タスクおよび実行ログ。安全に削除できます"),
             R143 => tr(lang, "Antigravity 桌面端应用与代码缓存，可安全清理", "Antigravity desktop app and code cache; safe to clean", "Antigravity デスクトップアプリとコードキャッシュ。安全に削除できます"),
             R144 => tr(lang, "Antigravity 桌面端工作区存储与状态，删除后无法恢复", "Antigravity desktop workspace storage and state; cannot be recovered after deletion", "Antigravity デスクトップワークスペースストレージと状態。削除後は復元できません"),
+            R145 => tr(lang, "DeepSeek Harness (DSH) 会话记录，删除后无法恢复对话历史", "DeepSeek Harness (DSH) session records; conversation history cannot be recovered after deletion", "DeepSeek Harness (DSH) セッション記録。削除後は会話履歴を復元できません"),
+            R146 => tr(lang, "DeepSeek Harness (DSH) 子任务垃圾回收备份，可安全清理", "DeepSeek Harness (DSH) subagent garbage-collection backups; safe to clean", "DeepSeek Harness (DSH) サブエージェントGCバックアップ。安全に削除できます"),
+            R147 => tr(lang, "DeepSeek Harness (DSH) 临时存储与附件缓存，可安全清理", "DeepSeek Harness (DSH) temporary storages and attachment caches; safe to clean", "DeepSeek Harness (DSH) 一時ストレージおよび添付キャッシュ。安全に削除できます"),
+            R148 => tr(lang, "DSH Desktop 渲染与应用缓存，可安全清理", "DSH Desktop rendering and application cache; safe to clean", "DSH Desktop レンダリングおよびアプリキャッシュ。安全に削除できます"),
+            R149 => tr(lang, "DSH Desktop 自动更新下载包残留，可安全清理", "DSH Desktop auto-updater installer leftovers; safe to clean", "DSH Desktop 自動更新ダウンロードパッケージの残余。安全に削除できます"),
         }
     }
 }
